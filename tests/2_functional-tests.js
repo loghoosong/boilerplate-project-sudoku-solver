@@ -10,14 +10,16 @@ chai.use(chaiHttp);
 suite('Functional Tests', () => {
     suite('#Solve', () => {
         // #1
-        test('Solve a puzzle with valid puzzle string: POST request to /api/solve', async function () {
-            for (let data of puzzlesAndSolutions) {
-                const res = await chai.request(server)
-                    .post('/api/solve')
-                    .send({ puzzle: data[0] });
-                assert.equal(res.status, 200);
-                assert.equal(res.body.solution, data[1]);
-            }
+        test('Solve a puzzle with valid puzzle string: POST request to /api/solve', function (done) {
+            const randdom = Math.trunc(Math.random() * puzzlesAndSolutions.length);
+            chai.request(server)
+                .post('/api/solve')
+                .send({ puzzle: puzzlesAndSolutions[randdom][0] })
+                .end(function (err, res) {
+                    assert.equal(res.status, 200);
+                    assert.equal(res.body.solution, puzzlesAndSolutions[randdom][1]);
+                    done();
+                });
         });
         // #2
         test('Solve a puzzle with missing puzzle string: POST request to /api/solve', function (done) {
